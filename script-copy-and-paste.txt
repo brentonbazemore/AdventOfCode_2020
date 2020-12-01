@@ -1,0 +1,9 @@
+Executed from root of project (AdventOfCode_2020). Replace X with day:
+
+. ./newDay.sh dX
+
+
+
+Executed from dX/pt1:
+
+. ./nextPart.sh
