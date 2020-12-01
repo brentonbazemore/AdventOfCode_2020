@@ -22,15 +22,38 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var fs = __importStar(require("fs"));
 var rawData = fs.readFileSync('input.txt', 'utf8');
 var data = rawData.split('\n');
-var map = new Set();
-data.some(function (num) {
-    var expectedPair = 2020 - +num;
-    if (map.has(expectedPair)) {
-        console.log(num, expectedPair, +num * expectedPair);
-        return true;
+var candidates = [];
+// Find candidates
+for (var i = 0; i < data.length; i++) {
+    for (var j = 0; j < data.length; j++) {
+        if (j === i) {
+            continue;
+        }
+        var num1 = +data[i];
+        var num2 = +data[j];
+        if (num1 + num2 > 2020) {
+            continue;
+        }
+        candidates.push({ num1: num1, num2: num2, sum: num1 + num2 });
     }
-    else {
-        map.add(+num);
+}
+for (var i = 0; i < data.length; i++) {
+    for (var j = 0; j < candidates.length; j++) {
+        var num1 = +data[i];
+        var num2 = candidates[j].sum;
+        if (num1 + num2 === 2020) {
+            console.log(num1, candidates[j].num1, candidates[j].num2, num1 * candidates[j].num1 * candidates[j].num2);
+        }
     }
-    return false;
-});
+}
+// const set = new Set();
+// candidates.some((can) => {
+//   const expectedPair = 2020 - can.sum;
+//   if (set.has(expectedPair)) {
+//     console.log(can, expectedPair, can.num1 * can.num2 * expectedPair);
+//     return true;
+//   } else {
+//     set.add(+can.sum);
+//   }
+//   return false;
+// });
