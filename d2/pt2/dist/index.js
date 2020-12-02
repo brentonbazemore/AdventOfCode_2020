@@ -25,16 +25,17 @@ var data = rawData.split('\n');
 var parsePolicy = function (line) {
     var _a = line.split(': '), policy = _a[0], password = _a[1];
     var _b = policy.split(' '), range = _b[0], char = _b[1];
-    var _c = range.split('-'), min = _c[0], max = _c[1];
+    var _c = range.split('-'), first = _c[0], second = _c[1];
     return {
-        policy: policy, password: password, range: range, char: char, min: min, max: max,
+        policy: policy, password: password, range: range, char: char, first: first, second: second,
     };
 };
 var validCount = 0;
 data.forEach(function (line) {
     var policy = parsePolicy(line);
-    var occurenceCount = (policy.password.match(new RegExp(policy.char, 'g')) || []).length;
-    if (occurenceCount >= +policy.min && occurenceCount <= +policy.max) {
+    var firstMatch = policy.password[+policy.first - 1] === policy.char;
+    var secondMatch = policy.password[+policy.second - 1] === policy.char;
+    if ((firstMatch || secondMatch) && !(firstMatch && secondMatch)) {
         validCount++;
     }
 });
