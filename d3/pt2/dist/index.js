@@ -25,24 +25,38 @@ var rows = rawData.split('\n');
 var X = 0;
 var Y = 1;
 var ROW_LENGTH = rows[0].length;
-var pos = [0, 0];
 var applySlope = function (pos, rise, run) {
     var newX = pos[X] + run;
     var newY = pos[Y] + rise;
     var newPos = [newX, newY];
     return newPos;
 };
-var treeCount = 0;
-while (pos[Y] < rows.length) {
-    pos = applySlope(pos, 1, 3);
-    var row = rows[pos[Y]];
-    if (row == null) {
-        break;
+var calculateTreeCount = function (rise, run) {
+    var pos = [0, 0];
+    var treeCount = 0;
+    while (pos[Y] < rows.length) {
+        pos = applySlope(pos, rise, run);
+        var row = rows[pos[Y]];
+        if (row == null) {
+            break;
+        }
+        var infiniteX = pos[X] % ROW_LENGTH;
+        var square = row[infiniteX];
+        if (square === '#') {
+            treeCount++;
+        }
     }
-    var infiniteX = pos[X] % ROW_LENGTH;
-    var square = row[infiniteX];
-    if (square === '#') {
-        treeCount++;
-    }
-}
-console.log(treeCount);
+    return treeCount;
+};
+var slopes = [
+    { rise: 1, run: 1 },
+    { rise: 1, run: 3 },
+    { rise: 1, run: 5 },
+    { rise: 1, run: 7 },
+    { rise: 2, run: 1 },
+];
+var counts = slopes.map(function (s) {
+    return calculateTreeCount(s.rise, s.run);
+});
+console.log(counts);
+console.log(counts[0] * counts[1] * counts[2] * counts[3] * counts[4]);

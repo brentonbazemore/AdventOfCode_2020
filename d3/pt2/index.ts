@@ -6,7 +6,6 @@ const rows: string[] = rawData.split('\n');
 const X = 0;
 const Y = 1;
 const ROW_LENGTH = rows[0].length;
-let pos = [0, 0];
 
 const applySlope = (pos: number[], rise: number, run: number) => {
   const newX = pos[X] + run;
@@ -16,19 +15,37 @@ const applySlope = (pos: number[], rise: number, run: number) => {
   return newPos;
 }
 
-let treeCount = 0;
-while (pos[Y] < rows.length) {
-  pos = applySlope(pos, 1, 3);
+const calculateTreeCount = (rise: number, run: number) => {
+  let pos = [0, 0];
+  let treeCount = 0;
+  while (pos[Y] < rows.length) {
+    pos = applySlope(pos, rise, run);
 
-  const row = rows[pos[Y]];
-  if (row == null) {
-    break;
+    const row = rows[pos[Y]];
+    if (row == null) {
+      break;
+    }
+    const infiniteX = pos[X] % ROW_LENGTH;
+    const square = row[infiniteX];
+    if (square === '#') {
+      treeCount++;
+    }
   }
-  const infiniteX = pos[X] % ROW_LENGTH;
-  const square = row[infiniteX];
-  if (square === '#') {
-    treeCount++;
-  }
+
+  return treeCount;
 }
 
-console.log(treeCount);
+const slopes = [
+  { rise: 1, run: 1 },
+  { rise: 1, run: 3 },
+  { rise: 1, run: 5 },
+  { rise: 1, run: 7 },
+  { rise: 2, run: 1 },
+];
+
+const counts = slopes.map((s) => {
+  return calculateTreeCount(s.rise, s.run);
+});
+
+console.log(counts);
+console.log(counts[0] * counts[1] * counts[2] * counts[3] * counts[4]);
