@@ -52,10 +52,16 @@ var findCol = function (indicator, pos, size, offset) {
     }
     return findCol(indicator, pos + 1, newSize, newOffset);
 };
-var max = data.reduce(function (prev, d) {
+var seats = [];
+data.forEach(function (d) {
     var row = findRow(d, 0, 128, 0);
     var col = findCol(d, 7, 8, 0);
     var rowId = row * 8 + col;
-    return Math.max(prev, rowId);
+    seats[rowId] = true;
 }, 0);
-console.log(max);
+for (var i = 47; i < seats.length; i++) {
+    if (!seats[i]) {
+        console.log(i);
+        break;
+    }
+}

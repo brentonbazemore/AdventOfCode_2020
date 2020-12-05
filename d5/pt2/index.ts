@@ -1,3 +1,4 @@
+import { Console } from 'console';
 import * as fs from 'fs';
 
 const rawData: string = fs.readFileSync('input.txt', 'utf8');
@@ -35,13 +36,18 @@ const findCol = (indicator: string, pos: number, size: number, offset: number): 
   return findCol(indicator, pos + 1, newSize, newOffset);
 };
 
-const max = data.reduce((prev, d) => {
+let seats: boolean[] = [];
+data.forEach((d) => {
   const row = findRow(d, 0, 128, 0);
   const col = findCol(d, 7, 8, 0);
 
   const rowId = row * 8 + col;
-
-  return Math.max(prev, rowId);
+  seats[rowId] = true;
 }, 0);
 
-console.log(max);
+for (let i = 47; i < seats.length; i++) {
+  if (!seats[i]) {
+    console.log(i);
+    break;
+  }
+}
