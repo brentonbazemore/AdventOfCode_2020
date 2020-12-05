@@ -45,6 +45,7 @@ data.forEach((d) => {
   seats[rowId] = true;
 }, 0);
 
+// Starting at 47 because that's where the numbers start lol
 for (let i = 47; i < seats.length; i++) {
   if (!seats[i]) {
     console.log(i);
