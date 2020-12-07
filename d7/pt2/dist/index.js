@@ -47,36 +47,17 @@ data.forEach(function (rule) {
     });
     rules[container] = childRules;
 });
-var bagSet = new Set();
-var findBag = function (color) {
-    Object.keys(rules).forEach(function (ruleColor) {
-        if (ruleColor === color) {
-            return;
-        }
-        var childRules = rules[ruleColor];
-        childRules.forEach(function (cr) {
-            if (cr.identifier === color) {
-                bagSet.add(ruleColor);
-                return;
-            }
-            try {
-                findBagRecur(cr.identifier, color, ruleColor);
-            }
-            catch (e) {
-            }
-        });
-    });
-};
-var findBagRecur = function (curColor, searchColor, originalColor) {
-    var curColorRules = rules[curColor];
-    for (var i = 0; i < curColorRules.length; i++) {
-        var r = curColorRules[i];
-        if (r.identifier === searchColor) {
-            bagSet.add(originalColor);
-            // throw new Error('dirty kick out to the top');
-        }
-        findBagRecur(r.identifier, searchColor, originalColor);
+var findChildCount = function (color) {
+    var childRules = rules[color];
+    var subCount = 0;
+    for (var i = 0; i < childRules.length; i++) {
+        var cr = childRules[i];
+        subCount += cr.quantity;
+        var multiplier = cr.quantity;
+        var childCount = findChildCount(cr.identifier);
+        subCount += (multiplier * (childCount));
     }
+    return subCount;
 };
-findBag('shiny gold');
-console.log('uniq count', bagSet.size);
+var c = findChildCount('shiny gold');
+console.log(c);

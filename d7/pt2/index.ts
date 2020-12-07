@@ -32,42 +32,20 @@ data.forEach((rule) => {
   rules[container] = childRules;
 });
 
-const bagSet = new Set();
-const findBag = (color: string) => {
-  Object.keys(rules).forEach((ruleColor) => {
-    if (ruleColor === color) {
-      return;
-    }
+const findChildCount = (color: string): number => {
+  const childRules = rules[color];
 
-    const childRules = rules[ruleColor];
-    childRules.forEach((cr) => {
-      if (cr.identifier === color) {
-        bagSet.add(ruleColor);
-        return;
-      }
+  let subCount = 0;
+  for (let i = 0; i < childRules.length; i++) {
+    const cr = childRules[i];
+    subCount += cr.quantity;
+    const multiplier = cr.quantity;
+    const childCount = findChildCount(cr.identifier);
+    subCount += (multiplier * (childCount));
+  }
 
-      try {
-        findBagRecur(cr.identifier, color, ruleColor);
-      } catch (e) {
-
-      }
-    });
-  });
+  return subCount;
 };
 
-const findBagRecur = (curColor: string, searchColor: string, originalColor: string) => {
-  const curColorRules = rules[curColor];
-
-  for (let i = 0; i < curColorRules.length; i++) {
-    const r = curColorRules[i];
-    if (r.identifier === searchColor) {
-      bagSet.add(originalColor);
-      // throw new Error('dirty kick out to the top');
-    }
-
-    findBagRecur(r.identifier, searchColor, originalColor);
-  }
-}
-
-findBag('shiny gold');
-console.log('uniq count', bagSet.size);
+const c = findChildCount('shiny gold');
+console.log(c);

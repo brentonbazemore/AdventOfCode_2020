@@ -13,7 +13,13 @@ plaid crimson bags contain 2 dull chartreuse bags, 4 striped maroon bags, 4 dull
 pale lavender bags contain 4 dotted tan bags, 5 striped olive bags.
 vibrant maroon bags contain 2 faded plum bags, 4 wavy aqua bags, 5 drab lavender bags, 4 light lavender bags.
 wavy coral bags contain 5 drab purple bags.
-drab salmon bags contain 4 shiny tan bags, 2 shiny white bags.
+drab salmonshiny gold bags contain 2 dark red bags.
+dark red bags contain 2 dark orange bags.
+dark orange bags contain 2 dark yellow bags.
+dark yellow bags contain 2 dark green bags.
+dark green bags contain 2 dark blue bags.
+dark blue bags contain 2 dark violet bags.
+dark violet bags contain no other bags. bags contain 4 shiny tan bags, 2 shiny white bags.
 light green bags contain 5 dim turquoise bags, 4 striped crimson bags, 5 dim salmon bags, 3 clear gray bags.
 dark indigo bags contain 5 shiny crimson bags.
 dark blue bags contain 3 drab indigo bags, 2 shiny beige bags, 2 shiny coral bags.
