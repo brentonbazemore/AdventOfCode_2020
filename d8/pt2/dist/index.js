@@ -18,32 +18,31 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var fs = __importStar(require("fs"));
+var handheld_1 = require("./handheld");
 var rawData = fs.readFileSync('input.txt', 'utf8');
 var data = rawData.split('\n');
-var accumulator = 0;
-var pointer = 0;
-var instructionMap = {
-    'acc': function (argument) {
-        accumulator += argument;
-        pointer++;
-    },
-    'jmp': function (argument) {
-        pointer += argument;
-    },
-    'nop': function (argument) {
-        pointer++;
-    },
-};
-var instructionSet = new Set();
-while (true) {
-    if (instructionSet.has(pointer)) {
-        console.log(accumulator);
-        break;
+for (var i = 0; i < data.length; i++) {
+    if (data[i].includes('nop')) {
+        var newInstruction = data[i].replace('nop', 'jmp');
+        var newData = __spreadArrays(data);
+        newData[i] = newInstruction;
+        new handheld_1.Handheld(newData).run();
     }
-    instructionSet.add(pointer);
-    var instruction = data[pointer];
-    var _a = instruction.split(' '), operation = _a[0], argument = _a[1];
-    instructionMap[operation](+argument);
+}
+for (var i = 0; i < data.length; i++) {
+    if (data[i].includes('jmp')) {
+        var newInstruction = data[i].replace('jmp', 'nop');
+        var newData = __spreadArrays(data);
+        newData[i] = newInstruction;
+        new handheld_1.Handheld(newData).run();
+    }
 }
