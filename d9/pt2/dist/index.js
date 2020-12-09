@@ -22,7 +22,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var fs = __importStar(require("fs"));
 var rawData = fs.readFileSync('input.txt', 'utf8');
 var data = rawData.split('\n');
-var PREAMBLE = 25;
+var INVALID_NUMBER = 10884537;
 var combinator = function (array) {
     var results = [];
     for (var i = 0; i < array.length - 1; i++) {
@@ -32,10 +32,19 @@ var combinator = function (array) {
     }
     return results;
 };
-for (var i = PREAMBLE; i < data.length; i++) {
-    var sums = combinator(data.slice(i - PREAMBLE, i));
-    if (!sums.includes(+data[i])) {
-        console.log(data[i]);
-        break;
+for (var i = 0; i < data.length; i++) {
+    var sum = 0;
+    var j = i;
+    var usedNums = [];
+    while (sum < INVALID_NUMBER) {
+        sum += +data[j];
+        usedNums.push(+data[j]);
+        if (sum === INVALID_NUMBER && j !== i) {
+            var max = Math.max.apply(Math, usedNums);
+            var min = Math.min.apply(Math, usedNums);
+            console.log(min, max, min + max);
+            throw new Error('Finished.');
+        }
+        j++;
     }
 }

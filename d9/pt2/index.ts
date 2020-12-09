@@ -3,23 +3,21 @@ import * as fs from 'fs';
 const rawData: string = fs.readFileSync('input.txt', 'utf8');
 const data: string[] = rawData.split('\n');
 
-const PREAMBLE = 25;
+const INVALID_NUMBER = 10884537;
 
-const combinator = (array: string[]) => {
-  const results = [];
-  for (let i = 0; i < array.length - 1; i++) {
-    for (let j = i + 1; j < array.length; j++) {
-      results.push(+array[i] + +array[j]);
+for (let i = 0; i < data.length; i++) {
+  let sum = 0;
+  let j = i;
+  const usedNums = [];
+  while (sum < INVALID_NUMBER) {
+    sum += +data[j];
+    usedNums.push(+data[j]);
+    if (sum === INVALID_NUMBER && j !== i) {
+      const max = Math.max(...usedNums);
+      const min = Math.min(...usedNums);
+      console.log(min, max, min + max);
+      throw new Error('Finished.');
     }
-  }
-
-  return results;
-}
-
-for (let i = PREAMBLE; i < data.length; i++) {
-  const sums = combinator(data.slice(i - PREAMBLE, i));
-  if (!sums.includes(+data[i])) {
-    console.log(data[i]);
-    break;
+    j++;
   }
 }
