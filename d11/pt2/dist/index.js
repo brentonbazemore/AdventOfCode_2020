@@ -45,18 +45,152 @@ var isOccupied = function (x, y, model) {
     return model[y][x] === OCCUPIED;
 };
 var getOccupiedCount = function (x, y, model) {
-    var _a;
     var count = 0;
-    for (var i = -1; i <= 1; i++) {
-        for (var j = -1; j <= 1; j++) {
-            if (i === 0 && j === 0) {
-                continue;
-            }
-            var val = (_a = model === null || model === void 0 ? void 0 : model[y + i]) === null || _a === void 0 ? void 0 : _a[x + j];
-            if (val === OCCUPIED) {
-                count++;
-            }
+    count += checkHoriz(x, y, model);
+    count += checkVert(x, y, model);
+    count += checkDiag(x, y, model);
+    return count;
+};
+var checkHoriz = function (x, y, model) {
+    var BOUNDS = { y: model.length, x: model[0].length };
+    var count = 0;
+    // positive x
+    var distance = 1;
+    while (true) {
+        if (x + distance >= BOUNDS.x) {
+            break;
         }
+        var val = model[y][x + distance];
+        if (val === OCCUPIED) {
+            count++;
+            break;
+        }
+        if (val === EMPTY) {
+            break;
+        }
+        distance++;
+    }
+    // negative x
+    distance = 1;
+    while (true) {
+        if (x - distance < 0) {
+            break;
+        }
+        var val = model[y][x - distance];
+        if (val === OCCUPIED) {
+            count++;
+            break;
+        }
+        if (val === EMPTY) {
+            break;
+        }
+        distance++;
+    }
+    return count;
+};
+var checkVert = function (x, y, model) {
+    var BOUNDS = { y: model.length, x: model[0].length };
+    var count = 0;
+    // positive y
+    var distance = 1;
+    while (true) {
+        if (y + distance >= BOUNDS.y) {
+            break;
+        }
+        var val = model[y + distance][x];
+        if (val === OCCUPIED) {
+            count++;
+            break;
+        }
+        if (val === EMPTY) {
+            break;
+        }
+        distance++;
+    }
+    // negative x
+    distance = 1;
+    while (true) {
+        if (y - distance < 0) {
+            break;
+        }
+        var val = model[y - distance][x];
+        if (val === OCCUPIED) {
+            count++;
+            break;
+        }
+        if (val === EMPTY) {
+            break;
+        }
+        distance++;
+    }
+    return count;
+};
+var checkDiag = function (x, y, model) {
+    var BOUNDS = { y: model.length, x: model[0].length };
+    var count = 0;
+    // positive y, positive x
+    var distance = 1;
+    while (true) {
+        if (y + distance >= BOUNDS.y || x + distance >= BOUNDS.x) {
+            break;
+        }
+        var val = model[y + distance][x + distance];
+        if (val === OCCUPIED) {
+            count++;
+            break;
+        }
+        if (val === EMPTY) {
+            break;
+        }
+        distance++;
+    }
+    // negative x, positive y
+    distance = 1;
+    while (true) {
+        if (y + distance >= BOUNDS.y || x - distance < 0) {
+            break;
+        }
+        var val = model[y + distance][x - distance];
+        if (val === OCCUPIED) {
+            count++;
+            break;
+        }
+        if (val === EMPTY) {
+            break;
+        }
+        distance++;
+    }
+    // negative x, positive y
+    distance = 1;
+    while (true) {
+        if (y - distance < 0 || x + distance >= BOUNDS.x) {
+            break;
+        }
+        var val = model[y - distance][x + distance];
+        if (val === OCCUPIED) {
+            count++;
+            break;
+        }
+        if (val === EMPTY) {
+            break;
+        }
+        distance++;
+    }
+    // negative x, negative y
+    distance = 1;
+    while (true) {
+        if (y - distance < 0 || x - distance < 0) {
+            break;
+        }
+        var val = model[y - distance][x - distance];
+        if (val === OCCUPIED) {
+            count++;
+            break;
+        }
+        if (val === EMPTY) {
+            break;
+        }
+        distance++;
     }
     return count;
 };
@@ -78,7 +212,7 @@ var runRound = function (oldData) {
             if (isEmpty(x, y, curData) && getOccupiedCount(x, y, curData) === 0) {
                 newRow += OCCUPIED;
             }
-            else if (isOccupied(x, y, curData) && getOccupiedCount(x, y, curData) >= 4) {
+            else if (isOccupied(x, y, curData) && getOccupiedCount(x, y, curData) >= 5) {
                 newRow += EMPTY;
             }
             else {

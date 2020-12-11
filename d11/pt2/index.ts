@@ -25,18 +25,193 @@ const isOccupied = (x: number, y: number, model: string[]) => {
 
 const getOccupiedCount = (x: number, y: number, model: string[]) => {
   let count = 0;
-  for (let i = -1; i <= 1; i++) {
-    for (let j = -1; j <= 1; j++) {
-      if (i === 0 && j === 0) {
-        continue;
-      }
+  count += checkHoriz(x, y, model);
+  count += checkVert(x, y, model);
+  count += checkDiag(x, y, model);
 
-      const val = model?.[y + i]?.[x + j];
+  return count;
+}
 
-      if (val === OCCUPIED) {
-        count++;
-      }
+// ctrl + c, ctrl + v > looping lol
+const checkHoriz = (x: number, y: number, model: string[]) => {
+  const BOUNDS = { y: model.length, x: model[0].length };
+
+  let count = 0;
+
+  // positive x
+  let distance = 1;
+  while (true) {
+    if (x + distance >= BOUNDS.x) {
+      break;
     }
+
+    const val = model[y][x + distance];
+    if (val === OCCUPIED) {
+      count++;
+      break;
+    }
+
+    if (val === EMPTY) {
+      break;
+    }
+
+    distance++;
+  }
+
+  // negative x
+  distance = 1;
+  while (true) {
+    if (x - distance < 0) {
+      break;
+    }
+
+    const val = model[y][x - distance];
+    if (val === OCCUPIED) {
+      count++;
+      break;
+    }
+
+    if (val === EMPTY) {
+      break;
+    }
+
+    distance++;
+  }
+
+  return count;
+}
+
+const checkVert = (x: number, y: number, model: string[]) => {
+  const BOUNDS = { y: model.length, x: model[0].length };
+
+  let count = 0;
+
+  // positive y
+  let distance = 1;
+  while (true) {
+    if (y + distance >= BOUNDS.y) {
+      break;
+    }
+
+    const val = model[y + distance][x];
+    if (val === OCCUPIED) {
+      count++;
+      break;
+    }
+
+    if (val === EMPTY) {
+      break;
+    }
+
+    distance++;
+  }
+
+  // negative x
+  distance = 1;
+  while (true) {
+    if (y - distance < 0) {
+      break;
+    }
+
+    const val = model[y - distance][x];
+    if (val === OCCUPIED) {
+      count++;
+      break;
+    }
+
+    if (val === EMPTY) {
+      break;
+    }
+
+    distance++;
+  }
+
+  return count;
+}
+
+const checkDiag = (x: number, y: number, model: string[]) => {
+  const BOUNDS = { y: model.length, x: model[0].length };
+
+  let count = 0;
+
+  // positive y, positive x
+  let distance = 1;
+  while (true) {
+    if (y + distance >= BOUNDS.y || x + distance >= BOUNDS.x) {
+      break;
+    }
+
+    const val = model[y + distance][x + distance];
+    if (val === OCCUPIED) {
+      count++;
+      break;
+    }
+
+    if (val === EMPTY) {
+      break;
+    }
+
+    distance++;
+  }
+
+  // negative x, positive y
+  distance = 1;
+  while (true) {
+    if (y + distance >= BOUNDS.y || x - distance < 0) {
+      break;
+    }
+
+    const val = model[y + distance][x - distance];
+    if (val === OCCUPIED) {
+      count++;
+      break;
+    }
+
+    if (val === EMPTY) {
+      break;
+    }
+
+    distance++;
+  }
+
+  // negative x, positive y
+  distance = 1;
+  while (true) {
+    if (y - distance < 0 || x + distance >= BOUNDS.x) {
+      break;
+    }
+
+    const val = model[y - distance][x + distance];
+    if (val === OCCUPIED) {
+      count++;
+      break;
+    }
+
+    if (val === EMPTY) {
+      break;
+    }
+
+    distance++;
+  }
+
+  // negative x, negative y
+  distance = 1;
+  while (true) {
+    if (y - distance < 0 || x - distance < 0) {
+      break;
+    }
+
+    const val = model[y - distance][x - distance];
+    if (val === OCCUPIED) {
+      count++;
+      break;
+    }
+
+    if (val === EMPTY) {
+      break;
+    }
+
+    distance++;
   }
 
   return count;
@@ -62,7 +237,7 @@ const runRound = (oldData: string[]) => {
 
       if (isEmpty(x, y, curData) && getOccupiedCount(x, y, curData) === 0) {
         newRow += OCCUPIED;
-      } else if (isOccupied(x, y, curData) && getOccupiedCount(x, y, curData) >= 4) {
+      } else if (isOccupied(x, y, curData) && getOccupiedCount(x, y, curData) >= 5) {
         newRow += EMPTY;
       } else {
         newRow += seatRow[x];
