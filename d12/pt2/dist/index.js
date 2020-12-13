@@ -37,40 +37,41 @@ var DIRECTION = {
     NORTH: 3,
     3: 'NORTH',
 };
+var clockwise = {
+    90: function (x, y) { return ({ x: y, y: -x }); },
+    180: function (x, y) { return ({ x: -x, y: -y }); },
+    270: function (x, y) { return ({ x: -y, y: x }); },
+};
+var counterClockwise = {
+    90: function (x, y) { return ({ x: -y, y: x }); },
+    180: function (x, y) { return ({ x: -x, y: -y }); },
+    270: function (x, y) { return ({ x: y, y: -x }); },
+};
 var actions = {
-    N: function (ship, magnitude) { return ship.y += magnitude; },
-    S: function (ship, magnitude) { return ship.y -= magnitude; },
-    E: function (ship, magnitude) { return ship.x += magnitude; },
-    W: function (ship, magnitude) { return ship.x -= magnitude; },
+    N: function (ship, magnitude) { return ship.waypoint.y += magnitude; },
+    S: function (ship, magnitude) { return ship.waypoint.y -= magnitude; },
+    E: function (ship, magnitude) { return ship.waypoint.x += magnitude; },
+    W: function (ship, magnitude) { return ship.waypoint.x -= magnitude; },
     L: function (ship, magnitude) {
-        var turn = magnitude / 90;
-        var dir = (ship.direction - turn + 4) % 4;
-        ship.direction = dir;
+        var turn = magnitude;
+        ship.waypoint = counterClockwise[turn](ship.waypoint.x, ship.waypoint.y);
     },
     R: function (ship, magnitude) {
-        var turn = magnitude / 90;
-        var dir = (ship.direction + turn) % 4;
-        ship.direction = dir;
+        var turn = magnitude;
+        ship.waypoint = clockwise[turn](ship.waypoint.x, ship.waypoint.y);
     },
     F: function (ship, magnitude) {
-        if (ship.direction === DIRECTION.EAST) {
-            actions.E(ship, magnitude);
-        }
-        if (ship.direction === DIRECTION.SOUTH) {
-            actions.S(ship, magnitude);
-        }
-        if (ship.direction === DIRECTION.WEST) {
-            actions.W(ship, magnitude);
-        }
-        if (ship.direction === DIRECTION.NORTH) {
-            actions.N(ship, magnitude);
-        }
+        ship.x += ship.waypoint.x * magnitude;
+        ship.y += ship.waypoint.y * magnitude;
     }
 };
 var ship = {
-    direction: DIRECTION.EAST,
     x: 0,
     y: 0,
+    waypoint: {
+        x: 10,
+        y: 1,
+    }
 };
 for (var i = 0; i < data.length; i++) {
     var line = data[i];
