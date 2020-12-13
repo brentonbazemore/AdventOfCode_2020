@@ -18,18 +18,23 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var fs = __importStar(require("fs"));
+var open_1 = __importDefault(require("open"));
 var rawData = fs.readFileSync('input.txt', 'utf8');
-var data = rawData.split(',');
-var times = data.filter(function (d) { return d !== 'x'; });
-var EARLIEST = 1002461;
-var lowest = { value: 0, diff: Infinity };
-times.forEach(function (time) {
-    var remainder = EARLIEST % +time;
-    var diff = +time - remainder;
-    if (diff < lowest.diff) {
-        lowest = { value: +time, diff: diff };
-    }
-});
-console.log(lowest, lowest.value * lowest.diff);
+var times = rawData.split(',');
+var vars = [
+    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+    'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y' // exclude z
+];
+// %3D =
+// %2B +
+// %2C ,
+var equations = times.map(function (time, i) { return ({ time: time, i: i }); })
+    .filter(function (obj) { return obj.time !== 'x'; })
+    .map(function (obj) { return [vars.pop(), '*', obj.time, '%3D', 'z', '%2B', obj.i].join('+'); })
+    .join('%2C');
+open_1.default("https://www.wolframalpha.com/input/?i=" + equations);

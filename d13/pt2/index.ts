@@ -1,19 +1,20 @@
 import * as fs from 'fs';
+import open from 'open';
 
 const rawData: string = fs.readFileSync('input.txt', 'utf8');
-const data: string[] = rawData.split(',');
+const times: string[] = rawData.split(',');
 
-const times = data.filter(d => d !== 'x');
+const vars = [
+  'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+  'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y' // exclude z
+];
 
-const EARLIEST = 1002461;
+// %3D =
+// %2B +
+// %2C ,
+const equations = times.map((time, i) => ({ time: time, i: i }))
+  .filter((obj) => obj.time !== 'x')
+  .map((obj) => [vars.pop(), '*', obj.time, '%3D', 'z', '%2B', obj.i].join('+'))
+  .join('%2C');
 
-let lowest = { value: 0, diff: Infinity };
-times.forEach((time) => {
-  const remainder = EARLIEST % +time;
-  const diff = +time - remainder;
-  if (diff < lowest.diff) {
-    lowest = { value: +time, diff: diff };
-  }
-});
-
-console.log(lowest, lowest.value * lowest.diff);
+open(`https://www.wolframalpha.com/input/?i=${equations}`);

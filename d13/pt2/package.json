@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/node": "^14.14.10"
+    "@types/node": "^14.14.10",
+    "open": "^7.3.0"
   }
 }
