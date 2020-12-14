@@ -19,21 +19,46 @@ export class Computer {
   instructions;
 
   mask = '';
-  memory: string[] = [];
+  memory: { [ind: string]: string } = {};
 
   actions = {
     mask: (params: { mask: string }) => {
       this.mask = params.mask;
     },
     mem: (params: { address: string, value: string }) => {
-      const bits = Number(params.value).toString(2).padStart(36, '0');
-      const maskedBits = bits.split('');
+      const addressBits = Number(params.address).toString(2).padStart(36, '0');
+      const maskedBits = addressBits.split('');
+      let xCount = 0;
       for (let i = 0; i < this.mask.length; i++) {
-        if (this.mask[i] !== 'X') {
+        if (this.mask[i] === '0') {
+          continue;
+        }
+
+        if (this.mask[i] === 'X') {
           maskedBits[i] = this.mask[i];
+          xCount++;
+        }
+
+        if (this.mask[i] === '1') {
+          maskedBits[i] = '1';
         }
       }
-      this.memory[+params.address] = maskedBits.join('');
+
+      const combos = 2 ** xCount;
+      const impactedAddresses: number[] = [];
+      for (let i = 0; i < combos; i++) {
+        let binaryAddress = maskedBits.join('');
+        let digits = Number(i).toString(2).padStart(xCount, '0');
+        for (let j = 0; j < xCount; j++) {
+          binaryAddress = binaryAddress.replace('X', digits[j]);
+        }
+        const addr = parseInt(binaryAddress, 2);
+        impactedAddresses.push(addr);
+      }
+
+      impactedAddresses.forEach((addr) => {
+        this.memory[addr] = params.value;
+      });
     },
   }
 
@@ -47,9 +72,12 @@ export class Computer {
       this.actions[action as 'mask' | 'mem'](params as any);
     });
 
-    console.log(this.memory.reduce((prev, cur) => {
-      const dec = parseInt(cur, 2);
-      return prev + dec;
-    }, 0));
+    let sum = 0;
+    const keys = Object.keys(this.memory);
+    keys.forEach((key) => {
+      sum += +this.memory[key];
+    });
+
+    console.log(sum);
   }
 }
