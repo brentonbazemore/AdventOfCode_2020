@@ -29,6 +29,9 @@ var safePush = function (obj, key, val) {
     else {
         obj[key] = [val];
     }
+    if (obj[key].length > 2) {
+        obj[key] = obj[key].slice(-2);
+    }
 };
 var numberHistory = {};
 var lastSpoken = 0;
@@ -37,13 +40,16 @@ for (var i = 0; i < data.length; i++) {
     numberHistory[data[i]] = [i];
     lastSpoken = data[i];
 }
-for (var i = data.length; i < 2020; i++) {
+for (var i = data.length; i < 30000000; i++) {
+    if (i % 50000 === 0) {
+        console.log(i);
+    }
     var history_1 = numberHistory[lastSpoken];
     if (!history_1 || history_1.length === 1) {
         lastSpoken = 0;
         safePush(numberHistory, '0', i);
     }
-    else if (numberHistory[lastSpoken]) {
+    else if (history_1) {
         var lastSeen = history_1[history_1.length - 1];
         var diff = lastSeen - history_1[history_1.length - 2];
         lastSpoken = diff;
