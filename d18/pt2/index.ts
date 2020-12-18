@@ -17,17 +17,25 @@ const evaluateParenthesis = (subExpressionString: string) => {
     '*': (a: number, b: number) => a * b,
   };
 
-  let val = +subExpressionAr[0];
-  let operator = subExpressionAr[1];
-  for (let i = 1; i < subExpressionAr.length; i++) {
-    if (i % 2 === 1) {
-      operator = subExpressionAr[i];
-    } else {
-      val = operations[operator as '*' | '+'](val, +subExpressionAr[i]);
-    }
+  while (subExpressionAr.includes('+')) {
+    const index = subExpressionAr.findIndex((v) => v === '+');
+    const first = +subExpressionAr[index - 1];
+    const second = +subExpressionAr[index + 1];
+
+    const out = first + second;
+    subExpressionAr.splice(index - 1, 3, `${out}`);
   }
 
-  return val;
+  while (subExpressionAr.includes('*')) {
+    const index = subExpressionAr.findIndex((v) => v === '*');
+    const first = +subExpressionAr[index - 1];
+    const second = +subExpressionAr[index + 1];
+
+    const out = first * second;
+    subExpressionAr.splice(index - 1, 3, `${out}`);
+  }
+
+  return +subExpressionAr[0];
 }
 
 const evaluate = (str: string) => {

@@ -35,17 +35,21 @@ var evaluateParenthesis = function (subExpressionString) {
         '+': function (a, b) { return a + b; },
         '*': function (a, b) { return a * b; },
     };
-    var val = +subExpressionAr[0];
-    var operator = subExpressionAr[1];
-    for (var i = 1; i < subExpressionAr.length; i++) {
-        if (i % 2 === 1) {
-            operator = subExpressionAr[i];
-        }
-        else {
-            val = operations[operator](val, +subExpressionAr[i]);
-        }
+    while (subExpressionAr.includes('+')) {
+        var index = subExpressionAr.findIndex(function (v) { return v === '+'; });
+        var first = +subExpressionAr[index - 1];
+        var second = +subExpressionAr[index + 1];
+        var out = first + second;
+        subExpressionAr.splice(index - 1, 3, "" + out);
     }
-    return val;
+    while (subExpressionAr.includes('*')) {
+        var index = subExpressionAr.findIndex(function (v) { return v === '*'; });
+        var first = +subExpressionAr[index - 1];
+        var second = +subExpressionAr[index + 1];
+        var out = first * second;
+        subExpressionAr.splice(index - 1, 3, "" + out);
+    }
+    return +subExpressionAr[0];
 };
 var evaluate = function (str) {
     var expression = str;
