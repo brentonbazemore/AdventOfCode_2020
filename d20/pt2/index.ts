@@ -1,5 +1,4 @@
 import * as fs from 'fs';
-import { uptime } from 'process';
 const { rotate, hflip } = require('2d-array-rotation');
 
 const rawData: string = fs.readFileSync('input.txt', 'utf8');
