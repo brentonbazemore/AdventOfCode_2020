@@ -41,13 +41,9 @@ while (maxCount < 10) {
   maxCount++;
 }
 
-for (let i = 0; i < filteredAllergens.length; i++) {
-  const ing = filteredAllergens[i].potentialIngredients[0];
-  lists.forEach(l => l.ingredients.delete(ing));
-}
-
-// console.log(lists.map((l, i) => ({ i: i + 1, s: l.allergens })));
-
-console.log(lists.reduce((prev, cur) => {
-  return cur.ingredients.size + prev;
-}, 0));
+const ordered = filteredAllergens.map(f => f.allergen).sort();
+let str = '';
+ordered.forEach((o) => {
+  str += ',' + filteredAllergens.find(f => f.allergen === o)?.potentialIngredients[0];
+});
+console.log(str.replace(',', ''));

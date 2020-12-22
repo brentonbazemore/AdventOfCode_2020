@@ -56,12 +56,10 @@ while (maxCount < 10) {
     }
     maxCount++;
 }
-console.log(filteredAllergens);
-// for (let i = 0; i < filteredAllergens.length; i++) {
-//   const ing = filteredAllergens[i].potentialIngredients[0];
-//   lists.forEach(l => l.ingredients.delete(ing));
-// }
-// console.log(lists.map((l, i) => ({ i: i + 1, s: l.allergens })));
-// console.log(lists.reduce((prev, cur) => {
-//   return cur.ingredients.size + prev;
-// }, 0));
+var ordered = filteredAllergens.map(function (f) { return f.allergen; }).sort();
+var str = '';
+ordered.forEach(function (o) {
+    var _a;
+    str += ',' + ((_a = filteredAllergens.find(function (f) { return f.allergen === o; })) === null || _a === void 0 ? void 0 : _a.potentialIngredients[0]);
+});
+console.log(str.replace(',', ''));
