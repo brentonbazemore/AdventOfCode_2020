@@ -29,67 +29,61 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var fs = __importStar(require("fs"));
 var rawData = fs.readFileSync('input.txt', 'utf8');
 var ogCups = rawData.split('').map(function (s) { return +s; });
-var findDestinationIndex = function (cups, currentCupValue) {
-    var _loop_1 = function (i) {
-        var nextNum = (currentCupValue - i + 9) % 9;
-        var index = cups.findIndex(function (c) { return (nextNum || 9) === c; });
-        if (index !== -1) {
-            return { value: index };
-        }
-    };
-    for (var i = 1; i <= 9; i++) {
-        var state_1 = _loop_1(i);
-        if (typeof state_1 === "object")
-            return state_1.value;
-    }
-};
-var move = function (c, currentCupIndex) {
-    console.log('cups:', c.map(function (cu, i) { return i === currentCupIndex ? "" + cu : cu; }));
-    var currentCupValue = c[currentCupIndex];
-    var cups = __spreadArrays(c);
-    // const threeCups = cups.splice(currentCupIndex + 1, 3);
-    var threeCups = __spreadArrays(popI(cups, currentCupIndex + 1));
-    console.log('pick up:', threeCups);
-    console.log('remainder: ', cups);
-    var destinationIndex = findDestinationIndex(cups, currentCupValue);
-    // console.log(cups, threeCups, destinationIndex);
-    console.log('destination', cups[destinationIndex], 'at', destinationIndex);
-    cups.splice.apply(cups, __spreadArrays([destinationIndex + 1, 0], threeCups));
-    while (cups[currentCupIndex] !== currentCupValue) {
-        arrayRotate(cups, 1);
-    }
-    var newCurrentCupIndex = (currentCupIndex + 1) % c.length;
-    return { cups: cups, currentCupIndex: newCurrentCupIndex };
-};
-var popI = function (arr, i) {
-    var nums = arr.splice(i, 3);
-    if (nums.length === 0) {
-        nums.push(arr.shift());
-        nums.push(arr.shift());
-        nums.push(arr.shift());
-    }
-    if (nums.length === 1) {
-        nums.push(arr.shift());
-        nums.push(arr.shift());
-    }
-    if (nums.length === 2) {
-        nums.push(arr.shift());
-    }
-    return nums;
-};
-var MOVE_COUNT = 100;
-var cups = __spreadArrays(ogCups);
-var currentCupIndex = 0;
-for (var i = 0; i < MOVE_COUNT; i++) {
-    console.log('move ', i + 1);
-    var out = move(cups, currentCupIndex);
-    // console.log('out', out.cups);
-    cups = out.cups;
-    currentCupIndex = out.currentCupIndex;
+// TODO: Make sure to insert the other million before here
+var allCups = __spreadArrays(ogCups);
+for (var i = 10; i <= 1000000; i++) {
+    allCups.push(i);
 }
-console.log(cups);
-function arrayRotate(arr, count) {
-    count -= arr.length * Math.floor(count / arr.length);
-    arr.push.apply(arr, arr.splice(0, count));
-    return arr;
+var MAX_CUP = 1000000;
+var cups = new Map();
+for (var i = 0; i < allCups.length; i++) {
+    var cur = allCups[i];
+    var next_1 = allCups[i + 1];
+    if (next_1) {
+        cups.set(cur, next_1);
+    }
+    else {
+        cups.set(cur, allCups[0]);
+    }
+}
+var removeCups = function (currentCup) {
+    var one = cups.get(currentCup);
+    var two = cups.get(one);
+    var three = cups.get(two);
+    var four = cups.get(three);
+    cups.set(currentCup, four);
+    return [one, two, three];
+};
+var insertCups = function (parent, insertedCups, child) {
+    cups.set(parent, insertedCups[0]);
+    cups.set(insertedCups[0], insertedCups[1]);
+    cups.set(insertedCups[1], insertedCups[2]);
+    cups.set(insertedCups[2], child);
+};
+var move = function (currentCup) {
+    var threeCups = removeCups(currentCup);
+    var nextCup = currentCup - 1;
+    while (true) {
+        if (nextCup <= 0) {
+            nextCup = MAX_CUP;
+        }
+        if (threeCups.includes(nextCup)) {
+            nextCup = nextCup - 1;
+        }
+        else {
+            break;
+        }
+    }
+    insertCups(nextCup, threeCups, cups.get(nextCup));
+    return cups.get(currentCup);
+};
+var MOVE_COUNT = 10000000;
+var currentCup = allCups[0];
+for (var i = 0; i < MOVE_COUNT; i++) {
+    currentCup = move(currentCup);
+}
+var next = 1;
+for (var i = 0; i < 2; i++) {
+    next = cups.get(next);
+    console.log(next);
 }

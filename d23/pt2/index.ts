@@ -3,79 +3,72 @@ import * as fs from 'fs';
 const rawData: string = fs.readFileSync('input.txt', 'utf8');
 const ogCups: number[] = rawData.split('').map(s => +s);
 
-const findDestinationIndex = (cups: number[], currentCupValue: number) => {
-  for (let i = 1; i <= 9; i++) {
-    const nextNum = (currentCupValue - i + 9) % 9;
-    const index = cups.findIndex(c => (nextNum || 9) === c);
-    if (index !== -1) {
-      // console.log({ i, index }, cups[index])
-      return index;
+const allCups = [...ogCups];
+for (let i = 10; i <= 1000000; i++) {
+  allCups.push(i);
+}
+
+const MAX_CUP = 1000000;
+
+let cups = new Map();
+for (let i = 0; i < allCups.length; i++) {
+  const cur = allCups[i];
+  const next = allCups[i + 1];
+  if (next) {
+    cups.set(cur, next);
+  } else {
+    cups.set(cur, allCups[0]);
+  }
+}
+
+const removeCups = (currentCup: number) => {
+  const one = cups.get(currentCup);
+  const two = cups.get(one);
+  const three = cups.get(two);
+  const four = cups.get(three);
+
+  cups.set(currentCup, four);
+
+  return [one, two, three];
+}
+
+const insertCups = (parent: number, insertedCups: number[], child: number) => {
+  cups.set(parent, insertedCups[0]);
+  cups.set(insertedCups[0], insertedCups[1]);
+  cups.set(insertedCups[1], insertedCups[2]);
+  cups.set(insertedCups[2], child);
+}
+
+const move = (currentCup: number) => {
+  const threeCups = removeCups(currentCup);
+
+  let nextCup = currentCup - 1;
+  while (true) {
+    if (nextCup <= 0) {
+      nextCup = MAX_CUP;
+    }
+
+    if (threeCups.includes(nextCup)) {
+      nextCup = nextCup - 1;
+    } else {
+      break;
     }
   }
+
+  insertCups(nextCup, threeCups, cups.get(nextCup));
+
+  return cups.get(currentCup);
 }
 
-const move = (c: number[], currentCupIndex: number) => {
-
-  console.log('cups:', c.map((cu, i) => i === currentCupIndex ? `${cu}` : cu))
-  const currentCupValue = c[currentCupIndex];
-  const cups = [...c];
-  // const threeCups = cups.splice(currentCupIndex + 1, 3);
-  const threeCups = [
-    ...popI(cups, currentCupIndex + 1)
-  ];
-
-  console.log('pick up:', threeCups)
-  console.log('remainder: ', cups)
-  const destinationIndex = findDestinationIndex(cups, currentCupValue);
-  // console.log(cups, threeCups, destinationIndex);
-  console.log('destination', cups[destinationIndex!], 'at', destinationIndex)
-  cups.splice(destinationIndex! + 1, 0, ...threeCups);
-
-  while (cups[currentCupIndex] !== currentCupValue) {
-    arrayRotate(cups, 1);
-  }
-
-
-  const newCurrentCupIndex = (currentCupIndex + 1) % c.length;
-
-  return { cups, currentCupIndex: newCurrentCupIndex }
-}
-
-const popI = (arr: number[], i: number) => {
-  let nums = arr.splice(i, 3);
-  if (nums.length === 0) {
-    nums.push(arr.shift()!);
-    nums.push(arr.shift()!);
-    nums.push(arr.shift()!);
-  }
-
-  if (nums.length === 1) {
-    nums.push(arr.shift()!);
-    nums.push(arr.shift()!);
-  }
-
-  if (nums.length === 2) {
-    nums.push(arr.shift()!);
-  }
-
-  return nums;
-}
-
-const MOVE_COUNT = 100;
-let cups = [...ogCups];
-let currentCupIndex = 0;
+const MOVE_COUNT = 10000000;
+let currentCup = allCups[0];
 for (let i = 0; i < MOVE_COUNT; i++) {
-  console.log('move ', i + 1)
-  const out = move(cups, currentCupIndex);
-  // console.log('out', out.cups);
-  cups = out.cups;
-  currentCupIndex = out.currentCupIndex;
+  if (i)
+    currentCup = move(currentCup);
 }
 
-console.log(cups);
-
-function arrayRotate(arr: any[], count: number) {
-  count -= arr.length * Math.floor(count / arr.length);
-  arr.push.apply(arr, arr.splice(0, count));
-  return arr;
+let next = 1;
+for (let i = 0; i < 2; i++) {
+  next = cups.get(next);
+  console.log(next);
 }
