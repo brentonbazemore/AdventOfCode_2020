@@ -21,5 +21,40 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var fs = __importStar(require("fs"));
 var rawData = fs.readFileSync('input.txt', 'utf8');
-var data = rawData.split('\n');
-console.log(data);
+var _a = rawData.split('\n').map(function (n) { return +n; }), cardKey = _a[0], doorKey = _a[1];
+var P = 20201227;
+var subject = 7;
+var cardValue = 1;
+var cardLoop = 1;
+while (true) {
+    cardValue *= subject;
+    cardValue %= P;
+    if (cardValue === cardKey) {
+        break;
+    }
+    cardLoop++;
+}
+console.log({ cardLoop: cardLoop });
+var doorValue = 1;
+var doorLoop = 1;
+while (true) {
+    doorValue *= subject;
+    doorValue %= P;
+    if (doorValue === doorKey) {
+        break;
+    }
+    doorLoop++;
+}
+console.log({ doorLoop: doorLoop });
+var outValue = 1;
+for (var i = 0; i < cardLoop; i++) {
+    outValue *= doorKey;
+    outValue %= P;
+}
+var outValue2 = 1;
+for (var i = 0; i < doorLoop; i++) {
+    outValue2 *= cardKey;
+    outValue2 %= P;
+}
+console.log(outValue);
+console.log(outValue2);
